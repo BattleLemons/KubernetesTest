@@ -1,0 +1,8 @@
+# local editor / OS
+.vscode/
+*.swp
+*.log
+
+# kubernetes state
+*.kubeconfig
+*.pem
