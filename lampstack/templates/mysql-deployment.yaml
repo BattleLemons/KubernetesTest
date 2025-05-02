@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "lampstack.fullname" . }}-mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "lampstack.name" . }}-mysql
+  template:
+    metadata:
+      labels:
+        app: {{ include "lampstack.name" . }}-mysql
+    spec:
+      containers:
+      - name: mysql
+        image: "{{ .Values.image.mysql.repository }}:{{ .Values.image.mysql.tag }}"
+        imagePullPolicy: {{ .Values.image.mysql.pullPolicy }}
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "lampstack.fullname" . }}-mysql-creds
+              key: mysql-root-password
+        - name: MYSQL_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "lampstack.fullname" . }}-mysql-creds
+              key: mysql-database
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - name: mysql-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-storage
+        persistentVolumeClaim:
+          claimName: {{ include "lampstack.fullname" . }}-mysql-pvc

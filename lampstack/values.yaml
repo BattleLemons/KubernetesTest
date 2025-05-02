@@ -1,0 +1,30 @@
+replicaCount: 1
+
+image:
+  php:
+    repository: lamp-php
+    tag: latest
+    pullPolicy: IfNotPresent
+  mysql:
+    repository: mysql
+    tag: 8.0
+    pullPolicy: IfNotPresent
+
+mysql:
+  rootPassword: ""
+  database: ""
+  storage: 5Gi
+
+service:
+  php:
+    type: NodePort
+    port: 80
+    nodePort: 30080
+  mysql:
+    type: ClusterIP
+    port: 3306
+
+persistence:
+  enabled: true
+  storageClass: standard
+  size: 5Gi

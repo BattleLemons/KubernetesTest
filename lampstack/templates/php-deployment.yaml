@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "lampstack.fullname" . }}-php
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "lampstack.name" . }}-php
+  template:
+    metadata:
+      labels:
+        app: {{ include "lampstack.name" . }}-php
+    spec:
+      containers:
+      - name: php
+        image: "{{ .Values.image.php.repository }}:{{ .Values.image.php.tag }}"
+        imagePullPolicy: {{ .Values.image.php.pullPolicy }}
+        env:
+        - name: DB_HOST
+          value: {{ printf "%s-mysql.%s.svc.cluster.local" (include "lampstack.fullname" .) .Release.Namespace | quote }}
+        - name: DB_USER
+          value: root
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "lampstack.fullname" . }}-mysql-creds
+              key: mysql-root-password
+        - name: DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "lampstack.fullname" . }}-mysql-creds
+              key: mysql-database
+        ports:
+        - containerPort: 80
