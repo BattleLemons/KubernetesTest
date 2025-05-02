@@ -6,3 +6,7 @@
 # kubernetes state
 *.kubeconfig
 *.pem
+
+# Kubernetes secrets
+/k8s/mysql/00-secret.yaml
+/k8s/mysql/00-secret.yaml
